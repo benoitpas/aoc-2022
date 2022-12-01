@@ -1,0 +1,57 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           aoc2022
+version:        0.0.1
+author:         Benoit Pasquereau
+maintainer:     Benoit Pasquereau
+copyright:      (c) 2022 Benoit Pasquereau
+license:        MIT
+build-type:     Simple
+
+library
+  exposed-modules:
+      Day1
+  other-modules:
+      Paths_aoc2022
+  hs-source-dirs:
+      src
+  ghc-options: -Wall
+  build-depends:
+      ansi-terminal ==0.11.*
+    , array ==0.5.4.0
+    , base ==4.*
+    , containers ==0.6.4.1
+    , hashmap ==1.3.3
+    , random ==1.2.*
+    , sort ==1.0.0.0
+    , time ==1.9.3
+    , unordered-containers ==0.2.*
+  default-language: Haskell2010
+
+test-suite spec
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Day1Spec
+      Paths_aoc2022
+  hs-source-dirs:
+      test
+  ghc-options: -Wall
+  build-depends:
+      ansi-terminal ==0.11.*
+    , aoc2022
+    , array ==0.5.4.0
+    , base ==4.*
+    , containers ==0.6.4.1
+    , hashmap ==1.3.3
+    , hspec ==2.*
+    , random ==1.2.*
+    , sort ==1.0.0.0
+    , time ==1.9.3
+    , unordered-containers ==0.2.*
+  default-language: Haskell2010
+  build-tool-depends: hspec-discover:hspec-discover == 2.*
