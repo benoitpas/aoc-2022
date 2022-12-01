@@ -3,6 +3,7 @@ module Day1Spec (spec) where
 import Test.Hspec
 import Day1
 
+ex1 :: [String]
 ex1 = ["1000",
        "2000",
        "3000",
@@ -21,5 +22,9 @@ ex1 = ["1000",
 spec :: Spec
 spec = do
   describe "maxCalories" $ do
-    it "computes the maxCalories carried by one elf" $ do
-      (maxCalories ex1) `shouldBe` 24000
+    it "computes the max Calories carried by one elf" $ do
+      maximum (calories ex1) `shouldBe` 24000
+
+  describe "max3Calories" $ do
+    it "computes the max Calories carried by three elves" $ do
+      max3Calories (calories ex1) `shouldBe` 45000
