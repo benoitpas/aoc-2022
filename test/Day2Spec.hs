@@ -9,6 +9,8 @@ ex1 = [ "A Y",
 
 spec :: Spec
 spec = do
-  describe "totalScore" $ do
-    it "computes the max Calories carried by one elf" $ do
-        (totalScore ex1) `shouldBe` 15
+  describe "score1" $ do
+    it "computes the score with interpretation 1" $ do
+        (totalScore score1 ex1) `shouldBe` 15
+    it "computes the score with interpretation 2" $ do
+        (totalScore score2 ex1) `shouldBe` 12
