@@ -17,11 +17,11 @@ parseInput l =
     let moves = map (\s -> let w = L.words s in (read (w !! 1), read (w !! 3), read (w !! 5))) (L.drop 2 rest)
     in (stacks, moves)
 
-getMessage :: (M.Map Int [Char], [(Int,Int,Int)]) -> [Char]
-getMessage (stacks, moves) = 
+getMessage :: ([Char] -> [Char]) -> (M.Map Int [Char], [(Int,Int,Int)]) -> [Char]
+getMessage rev (stacks, moves) = 
     let finalStacks = foldl (\s (n,si,di) -> let source = s M.! si in
                                              let s2 = (M.insert si (drop n source) s)
-                                             in (M.insert di (reverse (take n source) ++ (s M.! di)) s2)) stacks moves
+                                             in (M.insert di (rev (take n source) ++ (s M.! di)) s2)) stacks moves
     in (M.elems finalStacks) >>= (take 1) 
 
 run :: IO ()
@@ -29,4 +29,5 @@ run = do
     content <- readFile "src/day5_input.txt"
     let l = (lines content)
     let pInput = parseInput l
-    print ("puzzle 1: " ++ (show (getMessage pInput)))
+    print ("puzzle 1: " ++ (show (getMessage reverse pInput)))
+    print ("puzzle 2: " ++ (show (getMessage id pInput)))

@@ -24,5 +24,7 @@ spec = do
                                      [(1,2,1),(3,1,3),(2,2,1),(1,1,2)])
 
   describe "getMessage" $ do
-    it "get Message from input" $ do
-        (getMessage (parseInput ex1)) `shouldBe` "CMZ"
+    it "get Message from input part 1" $ do
+        (getMessage reverse (parseInput ex1)) `shouldBe` "CMZ"
+    it "get Message from input part 2" $ do
+        (getMessage id (parseInput ex1)) `shouldBe` "MCD"
