@@ -7,6 +7,7 @@ module Day7
         parseDirectory,
         parse,
         puzzle1,
+        puzzle2,
         run,
     ) where
 
@@ -46,13 +47,21 @@ parseDirectory name l = let (files,l2) = case words (head l) of
 parse l = case words (head l) of
             ["$","cd", "/"] -> let (t,_) = parseDirectory "." (tail l) in t
 
-puzzle1 l = let t = parse l in
-            let next t = let s = dSize t 
-                         in (dDirectories t >>= next) ++ if s <= 100000 then [s] else []
-            in sum $ next t
+directoriesSize t = let s = dSize t
+                    in (dDirectories t >>= directoriesSize) ++ [s]
+
+puzzle1 t = sum $ filter (<100000) (directoriesSize t)
+
+puzzle2 t = let unused = 70000000 - (dSize t) in
+            let toclear = 30000000 - unused in
+            let allds = directoriesSize t in
+            let tocleards = filter (\s -> s >= toclear) allds
+            in head (L.sort tocleards)
 
 run :: IO ()
 run = do
     content <- readFile "src/day7_input.txt"
     let l = (lines content)
-    print ("puzzle 1: " ++ (show (puzzle1 l)))
+    let t = parse l
+    print ("puzzle 1: " ++ (show (puzzle1 t)))
+    print ("puzzle 2: " ++ (show (puzzle2 t)))

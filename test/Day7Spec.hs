@@ -37,4 +37,8 @@ spec = do
                                                Directory "a" 94853 [File "f" 29116, File "g" 2557, File "h.lst" 62596] [Directory "e" 584 [File "i" 584] []]])
   describe "puzzle1" $ do
     it "computes the sum for puzzle 1" $ do
-      (puzzle1 ex1) `shouldBe` 95437
+      (puzzle1 (parse ex1)) `shouldBe` 95437
+
+  describe "puzzle2" $ do
+    it "finds the the file size for puzzle 1" $ do
+      (puzzle2 (parse ex1)) `shouldBe` 24933642
