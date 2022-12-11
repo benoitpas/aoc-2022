@@ -23,8 +23,8 @@ spec = do
 
   describe "findVisibity" $ do
     it "find which points are visible" $ do
-      (findVisibity ex1) `shouldBe` M.fromList [((0,0),True),((0,1),True),((0,2),True),((0,3),True),((0,4),True),
-                                                ((1,0),True),((1,4),True),
-                                                ((2,0),True),((2,4),True),
-                                                ((3,0),True),((3,4),True),
-                                                ((4,0),True),((4,1),True),((4,2),True),((4,3),True),((4,4),True)]
+      (findVisibity ex1) `shouldBe` [(0,0),(0,1),(0,2),(0,3),(0,4),
+                                     (1,0),(1,1),(1,2),      (1,4),
+                                     (2,0),(2,1),      (2,3),(2,4),
+                                     (3,0),      (3,2),      (3,4),
+                                     (4,0),(4,1),(4,2),(4,3),(4,4)]
