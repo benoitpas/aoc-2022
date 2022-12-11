@@ -28,3 +28,17 @@ spec = do
                                      (2,0),(2,1),      (2,3),(2,4),
                                      (3,0),      (3,2),      (3,4),
                                      (4,0),(4,1),(4,2),(4,3),(4,4)]
+
+  describe "scenicScore" $ do
+    it "finds the scenic score for point (2,1)" $ do
+      (scenicScore ex1 (2,1)) `shouldBe` 4
+
+    it "finds the scenic score for point (2,3)" $ do
+      (scenicScore ex1 (2,3)) `shouldBe` 8
+
+    it "finds the scenic score for point (3,4)" $ do
+      (scenicScore ex1 (3,4)) `shouldBe` 0
+
+  describe "maxScenicScore" $ do
+    it "finds the max scenic score for a terrain" $ do
+      (maxScenicScore ex1) `shouldBe` 8

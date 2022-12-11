@@ -25,18 +25,20 @@ data File = File
       fSize :: Int
     } deriving (Eq, Show)
 
-parseLs l = let (fileLines, r) = L.span (\l -> (head l) /= '$') l in
-            let files =  fileLines >>=  (\l -> case words l of
-                                                size:name:_ -> if (head size) <= '9' then [File name (read size)] else [])
-            in (files, r)
+parseLs l =
+    let (fileLines, r) = L.span (\l -> (head l) /= '$') l in
+    let files =  fileLines >>=  (\l -> case words l of
+                                        size:name:_ -> if (head size) <= '9' then [File name (read size)] else [])
+    in (files, r)
 
-parseDirectories l = let next (dirs,r,f) = case r of 
-                                            h:r2 -> case words h of
-                                                        ["$","cd",".."] -> (dirs,r2,True)
-                                                        ["$","cd", name] -> let (dir, r3) = parseDirectory name r2 in (dir:dirs,r3, length r3 == 0)
-                                            _ -> (dirs, r, True) in
-                     let (dirs,r,_) = until (\(_,_,f) -> f) next ([],l,False)
-                     in (dirs,r)
+parseDirectories l =
+    let next (dirs,r,f) = case r of
+                            h:r2 -> case words h of
+                                        ["$","cd",".."] -> (dirs,r2,True)
+                                        ["$","cd", name] -> let (dir, r3) = parseDirectory name r2 in (dir:dirs,r3, length r3 == 0)
+                            _ -> (dirs, r, True) in
+    let (dirs,r,_) = until (\(_,_,f) -> f) next ([],l,False)
+    in (dirs,r)
 
 parseDirectory name l = let (files,l2) = case words (head l) of
                                                 ["$","ls"] -> parseLs (tail l) in
