@@ -33,6 +33,9 @@ spec = do
     it "finds the scenic score for point (2,1)" $ do
       (scenicScore ex1 (2,1)) `shouldBe` 4
 
+    it "finds the scenic score for point (1,2)" $ do
+      (scenicScore ex1 (1,2)) `shouldBe` 6
+
     it "finds the scenic score for point (2,3)" $ do
       (scenicScore ex1 (2,3)) `shouldBe` 8
 

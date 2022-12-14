@@ -52,7 +52,7 @@ iScenicScore mapTerrain (xMax,yMax) (x,y) =
     let count (before,after) = length before + if length after > 0 then 1 else 0 in
     let scoreH xRange = count $ span (\p -> mapTerrain p < refc) (map (\x -> (x,y)) xRange) in
     let scoreV yRange = count $ span (\p -> mapTerrain p < refc) (map (\y -> (x,y)) yRange)
-    in scoreH [x-1,x-2..0] * scoreH [x+1,xMax] * scoreV [y-1,y-2..0] * scoreV [y+1..yMax]
+    in scoreH [x-1,x-2..0] * scoreH [x+1..xMax] * scoreV [y-1,y-2..0] * scoreV [y+1..yMax]
 
 maxScenicScore l =
     let (mapTerrain, (xMax,yMax)) = prepareTerrain l in
@@ -64,4 +64,4 @@ run = do
     content <- readFile "src/day8_input.txt"
     let l = (lines content)
     print ("puzzle 1: " ++ (show (length (findVisibity l))))
-    print ("puzzle 2: " ++ (show (maxScenicScore l)))
+    print ("puzzle 2: " ++ (show (maxScenicScore l)))    
