@@ -22,10 +22,10 @@ addpoints hPoints tailPoints prevPoints =
 
 tailPositions cmds nTail =
     let next ((hx,hy), tailPoints, prev) cmd = case words cmd of
-                                                    ["R",n] -> addpoints (map (\x -> (x,hy)) [hx+1..hx+read n]) tailPoints prev
-                                                    ["L",n] -> addpoints (map (\x -> (x,hy)) [hx-1, hx-2..hx-read n]) tailPoints prev
-                                                    ["D",n] -> addpoints (map (\y -> (hx,y)) [hy+1..hy+read n]) tailPoints prev
-                                                    ["U",n] -> addpoints (map (\y -> (hx,y)) [hy-1, hy-2..hy-read n]) tailPoints prev in
+                                                    ["R",n] -> addpoints [(x,hy) | x <- [hx+1..hx+read n]]       tailPoints prev
+                                                    ["L",n] -> addpoints [(x,hy) | x <- [hx-1, hx-2..hx-read n]] tailPoints prev
+                                                    ["D",n] -> addpoints [(hx,y) | y <- [hy+1..hy+read n]]       tailPoints prev
+                                                    ["U",n] -> addpoints [(hx,y) | y <- [hy-1, hy-2..hy-read n]] tailPoints prev in
     let (_,_,r) = foldl next ((0,0), replicate nTail (0,0), S.empty) cmds
     in r
 
