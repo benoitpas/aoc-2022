@@ -3,8 +3,6 @@ module Day10Spec (spec) where
 import Test.Hspec
 import Day10
 
-import qualified Data.Map as M
-
 ex1 =  ["noop",
         "addx 3",
         "addx -5"]
