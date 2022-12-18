@@ -23,8 +23,7 @@ spec = do
     describe "generateScreen" $ do
         it "generate the screen for example 2" $ do {
             content <-readFile "test/day10_example.txt";
---            (runProgram . lines) content `shouldBe` []
-            (generateScreen . runProgram . lines) content `shouldBe` [
+            (lines . generateScreen . runProgram . lines) content `shouldBe` [
                 "##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ",
                 "###   ###   ###   ###   ###   ###   ### ",
                 "####    ####    ####    ####    ####    ",
