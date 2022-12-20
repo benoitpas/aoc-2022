@@ -6,6 +6,7 @@ module Day13
         comparePacket,
         compareString,
         sumIndexGoodPairs,
+        decoderKey,
         run,
     ) where
 
@@ -47,6 +48,12 @@ comparePacket t1 t2 =
                     (List left, One right) -> compareList left [One right]
                     (List left, List right) -> compareList left right
 
+instance Ord Packet where
+    compare l r = case comparePacket l r of
+                    Just True -> LT
+                    Nothing -> EQ
+                    Just False -> GT
+
 compareString s1 s2 =
     let (_, p1, _) = parse (toTokens s1)
         (_, p2,_ ) = parse $ toTokens s2
@@ -60,9 +67,16 @@ sumIndexGoodPairs l =
     let (_, p) = until (\(l,_) -> length l == 0) next (l,[])
     in sum $ map snd (filter (\((l,r),_) -> (compareString l r) == Just True) (p `zip` [1..]))
 
+decoderKey l =
+    let l2 = ["[[2]]","[[6]]"] ++ filter (/="") l in
+    let p = L.sort $ map (\l3 -> let (_,p,_) = (parse . toTokens) l3 in p) l2
+    in  case (L.elemIndex (List [List [List [One 6]]]) p, L.elemIndex (List [List [List [One 2]]]) p) of
+            (Just i6, Just i2) -> (i6 + 1) * (i2 + 1)
+
 run :: IO ()
 run = do 
     content <- readFile "src/day13_input.txt"
     let l = (lines content)
 
     putStrLn ("puzzle 1: " ++ show (sumIndexGoodPairs l))
+    putStrLn ("puzzle 2: " ++ show (decoderKey l))

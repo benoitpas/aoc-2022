@@ -47,3 +47,7 @@ spec = do
     describe "sumIndexGoodPairs" $ do
         it "sumIndexGoodPairs" $ do
             (sumIndexGoodPairs ex1) `shouldBe` 13
+
+    describe "decoderKey" $ do
+        it "decodes the key for some packets" $ do
+            (decoderKey ex1) `shouldBe` 140
