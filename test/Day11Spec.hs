@@ -34,7 +34,6 @@ ex1 = [ "Monkey 0:",
         "        \"addx 3\",",
         "        \"addx -5\","]
 
-
 spec :: Spec
 spec = do
     describe "parseMonkey" $ do
