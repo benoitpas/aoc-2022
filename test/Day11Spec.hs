@@ -35,20 +35,18 @@ ex1 = [ "Monkey 0:",
 
 op = (*1)
 
-tst =  (\_->True)
-
 spec :: Spec
 spec = do
     describe "parseMonkey" $ do
         it "parse the information abour a monkey" $ do
-            (let Right(_, mk0, l0) = parseMonkey ex1 in mk0) `shouldBe` Monkey [79,98] op tst 2 3
+            (let Right(_, mk0, _) = parseMonkey ex1 in mk0) `shouldBe` Monkey [79,98] op 23 2 3
 
     describe "nextRound" $ do
         it "computes the next round" $ do
-            (nextRound (parseMonkeys ex1)) `shouldBe` (M.fromList  [(0, (2,Monkey [20,23,27,26] op tst 2 3)), 
-                                                                    (1, (4,Monkey [2080,25,167,207,401,1046] op tst 2 0)),
-                                                                    (2, (3,Monkey [] op tst 1 3)), 
-                                                                    (3, (5,Monkey [] op tst 0 1))])
+            (nextRound (parseMonkeys ex1)) `shouldBe` (M.fromList  [(0, (2,Monkey [20,23,27,26] op 23 2 3)), 
+                                                                    (1, (4,Monkey [2080,25,167,207,401,1046] op 19 2 0)),
+                                                                    (2, (3,Monkey [] op 13 1 3)), 
+                                                                    (3, (5,Monkey [] op 17 0 1))])
 
     describe "monkeyBusiness" $ do
         it "computes the monkey business level" $ do
