@@ -4,7 +4,8 @@ module Day11
         parseMonkey,
         parseMonkeys,
         nextRound,
-        monkeyBusiness,
+        monkeyBusiness1,
+        monkeyBusiness2,
         run,
     ) where
 
@@ -63,22 +64,28 @@ parseMonkeys allLines =
                                             Right (pid, monkey, l2) -> (l2, M.insert pid (0,monkey) m)) (allLinesF, M.empty)
     in monkeyMap
 
-nextRound :: M.Map Int (Int, Monkey) -> M.Map Int (Int, Monkey)
-nextRound monkeyMap = 
+nextRound :: Int -> Int -> M.Map Int (Int, Monkey) -> M.Map Int (Int, Monkey)
+nextRound dvsr commondiv monkeyMap = 
     foldl (\m i ->let (c,mk) = m M.! i in
                   let (nmk, throws) =  nextMonkey mk
                   in updateMap (M.insert i (c+length throws,nmk) m) throws) monkeyMap (L.sort (M.keys monkeyMap))
     where
-        nextMonkey mk = (mk { items = [] }, map (\i ->  let ni = (operation mk i ) `div` 3 
+        nextMonkey mk = (mk { items = [] }, map (\i ->  let ni = (operation mk i) `div` dvsr `mod` commondiv
                                                         in (if  ni `mod` (divisor mk) == 0   then ifTrue mk 
                                                                                         else ifFalse mk, ni)) 
                                             (items mk))
         updateMap mkMap throws = foldl (\mm (mki,w) -> let (c,mk) = (mm M.! mki) in
                                                        let nmk = mk { items = items mk ++ [w]}
+
                                                        in M.insert mki (c,nmk) mm) mkMap throws
 
-monkeyBusiness n allLines =
-    let lmap = last $ take (n+1) (iterate nextRound (parseMonkeys allLines)) in
+monkeyBusiness1 = monkeyBusiness 20 3 
+monkeyBusiness2 = monkeyBusiness 10000 1
+
+monkeyBusiness n dvsr allLines =
+    let monkeys = (parseMonkeys allLines) in
+    let commondiv = M.foldr (\(_,m) a -> a * (divisor m)) 1 monkeys in 
+    let lmap = last $ take (n+1) (iterate (nextRound dvsr commondiv) monkeys) in
     let l = L.sort $ map fst (M.elems lmap)
     in foldr (*) 1 (drop (length l - 2) l)
 
@@ -87,4 +94,5 @@ run = do
     content <- readFile "src/day11_input.txt"
     let l = (lines content)
 
-    putStrLn ("puzzle 1: " ++ (show  (monkeyBusiness 20 l)))
+    putStrLn ("puzzle 1: " ++ (show  (monkeyBusiness1 l)))
+    putStrLn ("puzzle 1: " ++ (show  (monkeyBusiness2 l)))

@@ -43,11 +43,16 @@ spec = do
 
     describe "nextRound" $ do
         it "computes the next round" $ do
-            (nextRound (parseMonkeys ex1)) `shouldBe` (M.fromList  [(0, (2,Monkey [20,23,27,26] op 23 2 3)), 
-                                                                    (1, (4,Monkey [2080,25,167,207,401,1046] op 19 2 0)),
-                                                                    (2, (3,Monkey [] op 13 1 3)), 
-                                                                    (3, (5,Monkey [] op 17 0 1))])
+            (nextRound 3 (23*19*13*17) (parseMonkeys ex1)) `shouldBe` (M.fromList
+                [(0, (2,Monkey [20,23,27,26] op 23 2 3)),
+                 (1, (4,Monkey [2080,25,167,207,401,1046] op 19 2 0)),
+                 (2, (3,Monkey [] op 13 1 3)), 
+                 (3, (5,Monkey [] op 17 0 1))])
 
     describe "monkeyBusiness" $ do
         it "computes the monkey business level" $ do
-            (monkeyBusiness 20 ex1) `shouldBe` 10605
+            (monkeyBusiness1 ex1) `shouldBe` 10605
+
+    describe "monkeyBusiness" $ do
+        it "computes the monkey business level" $ do
+            (monkeyBusiness2 ex1) `shouldBe` 2713310158
