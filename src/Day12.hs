@@ -1,6 +1,7 @@
 module Day12
     (
         toPoints,
+        prepare,
         shortestDistance,
         run,
     ) where
@@ -8,7 +9,9 @@ module Day12
 import qualified Data.Char as C
 import qualified Data.List as L
 import qualified Data.Map as M
-import qualified Data.Set as S
+
+import Codec.Picture
+import Data.Word
 
 type Point = (Int,Int)
 
@@ -24,36 +27,86 @@ next :: M.Map Point Char -> ([(Int,Point,Point)], M.Map Point (Int,Point)) -> ([
 next tmap (todo, done) = 
     let directions = [(1,0),(0,1),(-1,0),(0,-1)] in
     let mergeTodo td1 td2 =
-            foldr (\(d,p,sp) td -> case L.find (\(d1,p1,sp1) -> p1 == p) td of
-                                    Just (d1,_,sp1) -> if d<d1 then L.insert (d,p,sp) td else td
+            foldr (\(d,p,sp) td -> case L.find (\(_,p1,_) -> p1 == p) td of
+                                    Just (d1,_,_) -> if d<d1 then L.insert (d,p,sp) td else td
                                     _ -> L.insert (d,p,sp) td) td1 td2
     in case todo of
             (d,(x,y),sp):r -> let pc = tmap M.! (x,y) in
-                              let distance npc = 1 + abs (C.ord npc - C.ord pc) in
+                              let canMove npc = npc <= pc || (C.ord npc - C.ord pc) <= 1 in
                               let nextPoints = directions >>=(\(dx,dy) -> let np = (x+dx,y+dy)
                                                                           in case (M.lookup np tmap, M.member np done) of
-                                                                                (Just npc, False) -> let dd = distance npc
-                                                                                                     in if dd <=2 then [(d + 1,np,(x,y))]
-                                                                                                                  else []
+                                                                                (Just npc, False) -> if canMove npc then [(d + 1,np,(x,y))]
+                                                                                                                    else []
                                                                                 _ -> [])
                               in (mergeTodo r nextPoints, M.insert (x,y) (d,sp) done)
             _ -> (todo, done)
 
-shortestDistance l =
+prepare l =
+    let nbCols = (length (head l))
+        nbRows = (length l) in
     let tPoints = toPoints l in
-    let findPoint cToFind = head $ tPoints >>= (\(p,c) -> if c == cToFind then [p] else []) in
+    let findPoint cToFind = head $ [p | (p,c) <- tPoints, c == cToFind ] in
     let startP = findPoint 'S' 
         endP = findPoint 'E' in
-    let tMap = M.insert startP 'a' (M.insert endP 'z' (M.fromList tPoints)) in
+    let tMap = M.insert startP 'a' (M.insert endP 'z' (M.fromList tPoints))
+    in (tMap, startP, endP, nbCols, nbRows)
+
+shortestDistance tMap startP endP =
     let next' = next tMap in
     let (_,done) = until (\(todo,_) -> length todo == 0) next' ([(0,startP,startP)], M.empty) in
-    let Just (r,_) = M.lookup endP done
-    in r
+    done
+
+colors :: Char -> (Word8,Word8,Word8)
+colors 'a' = (0x10,0x10,0x00)
+colors 'b' = (0x00,0x10,0x10)
+colors 'c' = (0x10,0x00,0x10)
+colors 'd' = (0x20,0x20,0x00)
+colors 'e' = (0x00,0x20,0x20)
+colors 'f' = (0x20,0x00,0x20)
+colors 'g' = (0x30,0x30,0x00)
+colors 'h' = (0x00,0x30,0x30)
+colors 'i' = (0x30,0x00,0x30)
+colors 'j' = (0x40,0x40,0x00)
+colors 'k' = (0x00,0x40,0x40)
+colors 'l' = (0x40,0x00,0x40)
+colors 'm' = (0x50,0x00,0x50)
+colors 'n' = (0x00,0x50,0x50)
+colors 'o' = (0x50,0x00,0x50)
+colors 'p' = (0x60,0x60,0x00)
+colors 'q' = (0x00,0x60,0x60)
+colors 'r' = (0x60,0x00,0x60)
+colors 's' = (0x70,0x70,0x00)
+colors 't' = (0x00,0x70,0x70)
+colors 'u' = (0x70,0x00,0x70)
+colors 'v' = (0x80,0x80,0x00)
+colors 'w' = (0x00,0x80,0x80)
+colors 'x' = (0x80,0x00,0x80)
+colors 'y' = (0x90,0x90,0x00)
+colors 'z' = (0x00,0x90,0x90)
+
+writeTerrain tMap nbCols nbRows =
+    let generatePixel x y = let (r,g,b) = colors (tMap M.! (x,y)) in PixelRGB8 r g b in
+    let image = generateImage generatePixel nbCols nbRows
+    in writeBitmap "terrain.bmp" image
+
+writeHeatMap dMap nbCols nbRows =
+    let e = map fst (M.elems dMap) in
+    let dMax = maximum e in
+    let generatePixel x y = let (r,g,b) = case M.lookup (x,y) dMap of
+                                            Just (d,_) -> (toEnum (d * 250 `div` dMax), 0,0)
+                                            _ -> (0x80,0x80,0x80) in PixelRGB8 r g b in
+    let image = generateImage generatePixel nbCols nbRows
+    in writeBitmap "heatmap.bmp" image
 
 run :: IO ()
 run = do
     content <- readFile "src/day12_input.txt"
     let l = (lines content)
+    let (tMap, startP, endP, nbCols, nbRows) = prepare l
+    writeTerrain tMap nbCols nbRows
+    let sm = shortestDistance tMap startP endP
 
-    putStrLn ("puzzle 1: " ++ (show (shortestDistance l))) -- 5904 points = 41*144
+    writeHeatMap sm nbCols nbRows
+    let Just (p1,_) = M.lookup endP sm
+    putStrLn ("puzzle 1: " ++ (show p1))
     
