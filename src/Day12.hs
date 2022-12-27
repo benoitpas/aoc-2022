@@ -3,6 +3,8 @@ module Day12
         toPoints,
         prepare,
         shortestDistance,
+        findPath,
+        findTrail,
         run,
     ) where
 
@@ -56,6 +58,14 @@ shortestDistance tMap startP endP =
     let (_,done) = until (\(todo,_) -> length todo == 0) next' ([(0,startP,startP)], M.empty) in
     done
 
+findPath tMap endP =
+    let next (path,_) = let p = head path in
+                        let (_,np) = tMap M.! p in
+                        let finished = p == np
+                        in (if finished then path else np:path, finished) in
+    let (r,_) = until snd next ([endP], False)
+    in r
+
 colors :: Char -> (Word8,Word8,Word8)
 colors 'a' = (0x10,0x10,0x00)
 colors 'b' = (0x00,0x10,0x10)
@@ -84,8 +94,10 @@ colors 'x' = (0x80,0x00,0x80)
 colors 'y' = (0x90,0x90,0x00)
 colors 'z' = (0x00,0x90,0x90)
 
-writeTerrain tMap nbCols nbRows =
-    let generatePixel x y = let (r,g,b) = colors (tMap M.! (x,y)) in PixelRGB8 r g b in
+writeTerrain tMap path nbCols nbRows =
+    let generatePixel x y = let (r,g,b) = case (L.elem (x,y) path, (tMap M.! (x,y))) of
+                                                    (True,_) -> (0xEF,0xEF,0xEF) 
+                                                    (_, c) -> colors c in PixelRGB8 r g b in
     let image = generateImage generatePixel nbCols nbRows
     in writeBitmap "terrain.bmp" image
 
@@ -98,15 +110,24 @@ writeHeatMap dMap nbCols nbRows =
     let image = generateImage generatePixel nbCols nbRows
     in writeBitmap "heatmap.bmp" image
 
+findTrail tMap dMap endP =
+    let startingPoints = [p | (p,c) <- M.toList tMap, c == 'a'] in
+    let trails = [findPath dMap2 endP | sp <- startingPoints ,let dMap2 = shortestDistance tMap sp endP, M.member endP dMap2]
+    in head $ L.sortOn length trails
+
 run :: IO ()
 run = do
     content <- readFile "src/day12_input.txt"
     let l = (lines content)
     let (tMap, startP, endP, nbCols, nbRows) = prepare l
-    writeTerrain tMap nbCols nbRows
     let sm = shortestDistance tMap startP endP
-
+    let path = findPath sm endP
+    writeTerrain tMap path nbCols nbRows
     writeHeatMap sm nbCols nbRows
     let Just (p1,_) = M.lookup endP sm
     putStrLn ("puzzle 1: " ++ (show p1))
+    let trail = findTrail tMap sm endP
+    let p2 = length trail - 1
+    putStrLn ("puzzle 2: " ++ (show p2))
+
     
