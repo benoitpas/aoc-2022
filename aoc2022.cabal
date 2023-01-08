@@ -19,6 +19,7 @@ library
       Day11
       Day12
       Day13
+      Day14
       Day2
       Day3
       Day4
@@ -39,6 +40,7 @@ library
     , base ==4.*
     , containers ==0.6.4.1
     , hashmap ==1.3.3
+    , parsec ==3.*
     , random ==1.2.*
     , sort ==1.0.0.0
     , time ==1.9.3
@@ -53,6 +55,7 @@ test-suite spec
       Day11Spec
       Day12Spec
       Day13Spec
+      Day14Spec
       Day1Spec
       Day2Spec
       Day3Spec
@@ -75,6 +78,7 @@ test-suite spec
     , containers ==0.6.4.1
     , hashmap ==1.3.3
     , hspec ==2.*
+    , parsec ==3.*
     , random ==1.2.*
     , sort ==1.0.0.0
     , time ==1.9.3

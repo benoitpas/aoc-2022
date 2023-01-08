@@ -17,6 +17,7 @@ dependencies:
  - ansi-terminal == 0.11.*
  - random == 1.2.*
  - JuicyPixels == 3.*
+ - parsec == 3.*
 
 
 library:
