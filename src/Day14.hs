@@ -5,6 +5,7 @@ module Day14
         run,
     ) where
 
+import qualified Data.List as L
 import qualified Data.Map as M
 
 import qualified Text.Parsec as P
@@ -52,9 +53,15 @@ addRocks m rocks =
                       ((head rocks),m) (tail rocks)
     in r
 
+iPSand = (500,0)
+
+--next (cave, pSand) =
 run :: IO ()
 run = do 
     content <- readFile "src/day14_input.txt"
     let l = (lines content)
+    let rocks = parseLines l
+    let terrain = foldl addRocks M.empty rocks
+    let maxY = L.maximum $ map snd (M.keys terrain)
     putStrLn (show (parseLines l))
     putStrLn ("puzzle 1: ")
