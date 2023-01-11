@@ -15,5 +15,13 @@ spec = do
                                           [(503,4), (502,4), (502,9), (494,9)]]
 
     describe "addRocks" $ do
-        it "add the rocks corresponding to a line to the terrain" $ do
-            (addRocks M.empty [(498,4), (498,6), (496,6)]) `shouldBe` (M.fromList [((496,6),'#'),((497,6),'#'),((498,4),'#'),((498,5),'#'),((498,6),'#')])
+        it "add the rocks corresponding to a line to the terrain 1" $ do
+            (addRocks M.empty [(498,4), (498,6), (496,6)]) `shouldBe` (M.fromList [((496,6),'#'),((497,6),'#'),((498,4),'#'),
+                                                                                   ((498,5),'#'),((498,6),'#')])
+        it "add the rocks corresponding to a line to the terrain 2" $ do
+            (addRocks M.empty [(503,4), (502,4), (502,9)]) `shouldBe` (M.fromList [((502,4),'#'),((502,5),'#'),((502,6),'#'),((502,7),'#'),
+                                                                                   ((502,8),'#'),((502,9),'#'),((503,4),'#')])
+
+    describe "nbSandGrains" $ do
+        it "counts the number of sand grains that accumulate on the rocks" $ do
+            (nbSandGrains ex1) `shouldBe` 24

@@ -2,6 +2,7 @@ module Day14
     (   
         parseLines,
         addRocks,
+        nbSandGrains,
         run,
     ) where
 
@@ -49,19 +50,28 @@ generatePoints (x1,y1) (x2,y2)
 
 addRocks :: M.Map Point Char -> [Point] -> M.Map Point Char
 addRocks m rocks = 
-    let (_,r) = foldl (\(p',m') p -> foldl (\(_,m'') np -> (np,M.insert np '#' m'')) (p,m') (generatePoints p p')) 
+    let (_,r) = foldl (\(p',m') p -> foldl (\(_,m'') np -> (np,M.insert np '#' m'')) (p,m') (generatePoints p' p))
                       ((head rocks),m) (tail rocks)
     in r
 
 iPSand = (500,0)
 
---next (cave, pSand) =
+next (cave, (xps,yps)) = case (getPoint (xps-1,yps+1), getPoint (xps,yps+1), getPoint (xps+1,yps+1)) of
+                            ( _ ,' ', _ ) -> (cave, (xps,yps+1))
+                            (' ', _ , _ ) -> (cave, (xps-1,yps+1))
+                            ( _ , _ ,' ') -> (cave, (xps+1,yps+1))
+                            _ -> (M.insert (xps,yps) 'o' cave, iPSand)
+                         where getPoint p = M.findWithDefault ' ' p cave
+
+nbSandGrains l =
+    let rocks = parseLines l in
+    let terrain = foldl addRocks M.empty rocks in
+    let maxY = L.maximum $ map snd (M.keys terrain) in
+    let (c,p) = until (\(_,(_,y)) -> maxY < y) next (terrain, iPSand)
+    in length $ filter (== 'o') (M.elems c)
+
 run :: IO ()
 run = do 
     content <- readFile "src/day14_input.txt"
     let l = (lines content)
-    let rocks = parseLines l
-    let terrain = foldl addRocks M.empty rocks
-    let maxY = L.maximum $ map snd (M.keys terrain)
-    putStrLn (show (parseLines l))
-    putStrLn ("puzzle 1: ")
+    putStrLn ("puzzle 1: " ++ (show (nbSandGrains l)))
