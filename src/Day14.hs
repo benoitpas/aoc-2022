@@ -54,24 +54,29 @@ addRocks m rocks =
                       ((head rocks),m) (tail rocks)
     in r
 
+iPSand :: Point
 iPSand = (500,0)
 
-next (cave, (xps,yps)) = case (getPoint (xps-1,yps+1), getPoint (xps,yps+1), getPoint (xps+1,yps+1)) of
-                            ( _ ,' ', _ ) -> (cave, (xps,yps+1))
-                            (' ', _ , _ ) -> (cave, (xps-1,yps+1))
-                            ( _ , _ ,' ') -> (cave, (xps+1,yps+1))
-                            _ -> (M.insert (xps,yps) 'o' cave, iPSand)
-                         where getPoint p = M.findWithDefault ' ' p cave
+next maxY isFloor (cave, (xps,yps), _) =
+    let nYps = yps + 1 in
+    case (getPoint (xps,yps), getPoint (xps-1,nYps), getPoint (xps,nYps), getPoint (xps+1,nYps)) of
+        ('o', _ , _ , _ ) -> (cave, (xps,yps), True)
+        ( _ , _ ,' ', _ ) -> (cave, (xps,nYps), not isFloor && maxY < nYps)
+        ( _ ,' ', _ , _ ) -> (cave, (xps-1,nYps), not isFloor && maxY < nYps)
+        ( _ , _ , _ ,' ') -> (cave, (xps+1,nYps), not isFloor && maxY < nYps)
+        _ -> (M.insert (xps,yps) 'o' cave, iPSand, False)
+    where getPoint (x,y) = if isFloor && y == (maxY + 2) then '#' else M.findWithDefault ' ' (x,y) cave
 
-nbSandGrains l =
+nbSandGrains isFloor l =
     let rocks = parseLines l in
     let terrain = foldl addRocks M.empty rocks in
     let maxY = L.maximum $ map snd (M.keys terrain) in
-    let (c,p) = until (\(_,(_,y)) -> maxY < y) next (terrain, iPSand)
+    let (c,_,_) = until (\(_,_,f) -> f) (next maxY isFloor) (terrain, iPSand, False)
     in length $ filter (== 'o') (M.elems c)
 
 run :: IO ()
 run = do 
     content <- readFile "src/day14_input.txt"
     let l = (lines content)
-    putStrLn ("puzzle 1: " ++ (show (nbSandGrains l)))
+    putStrLn ("puzzle 1: " ++ (show (nbSandGrains False l)))
+    putStrLn ("puzzle 2: " ++ (show (nbSandGrains True l)))
